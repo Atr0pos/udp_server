@@ -1,7 +1,7 @@
 import socket
 import json
 
-test
+test2
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5656
 
