@@ -1,3 +1,4 @@
+import select
 import socket
 from threading import Thread
 import copy
@@ -12,9 +13,16 @@ class UdpServer(Thread):
 		Thread.__init__(self)
 
 		self.socket = sock
+		self.messageQueue = {}
 		
 	def run(self):
-		while True:
+		potential_readers = [self.socket]
+		potential_writers = []
+
+		while potential_readers:
+
+			readable, writable, exceptional = select.select(potential_readers, potential_writers, potential_readers)
+
 			data, addr = self.socket.recvfrom(1024)
 
 			if not addr in players:
@@ -26,7 +34,7 @@ UDP_IP = "127.0.0.1"
 UDP_PORT = 5656
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+sock.setblocking(0)
 sock.bind((UDP_IP, UDP_PORT))
 
 players = {}
