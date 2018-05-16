@@ -23,6 +23,16 @@ class UdpServer(Thread):
 
 			readable, writable, exceptional = select.select(potential_readers, potential_writers, potential_readers)
 
+			for sock in readable:
+
+				if sock is self.socket:
+					#Must be ready to accept a new connection
+					conn, addr = sock.accept()
+					print 'new connection from', addr
+					conn.setblocking(0) #connections must always be non blocking
+
+				pass
+
 			data, addr = self.socket.recvfrom(1024)
 
 			if not addr in players:
@@ -34,7 +44,7 @@ UDP_IP = "127.0.0.1"
 UDP_PORT = 5656
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.setblocking(0)
+sock.setblocking(0) #set socket to be non blocking
 sock.bind((UDP_IP, UDP_PORT))
 
 players = {}
